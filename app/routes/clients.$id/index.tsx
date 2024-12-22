@@ -5,7 +5,7 @@ import { MoveLeft } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "Clients" }];
+  return [{ title: "Client Detail" }];
 };
 
 export const loader = async () => {

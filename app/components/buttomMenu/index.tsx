@@ -1,4 +1,3 @@
-import { Button } from "~/components/ui/button";
 import { Home, User, Settings, CirclePlus } from "lucide-react";
 import { NavLink } from "@remix-run/react";
 

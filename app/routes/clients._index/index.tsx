@@ -1,6 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { PlusIcon } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { CirclePlus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Link, useLoaderData } from "@remix-run/react";
 
@@ -21,10 +20,10 @@ export default function Index() {
     <div>
       <div className="flex justify-between items-center">
         <h1 className="font-bold text-2xl">顧客一覧リスト</h1>
-        <Button className="flex">
-          <span className="text-sm">新規追加</span>
-          <PlusIcon className="h-5 w-5 text-gray-500" />
-        </Button>
+        <Link to="/clients/new" className="flex">
+          <span className="text-sm mr-1">新規追加</span>
+          <CirclePlus className="h-5 w-5 text-gray-500" />
+        </Link>
       </div>
       <ul className="mt-5">
         <li>
