@@ -1,20 +1,26 @@
 import type { MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { SearchInput } from "~/components/searchInput/index";
+import { LoaderFunction } from "@remix-run/node";
+import { prisma } from "~/utils/prismaServer";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Home" }];
 };
 
-export const loader = async () => {
-  const result = Array.from({ length: 6 }).map(() => ({
+export const loader: LoaderFunction = async () => {
+  const users = await prisma.user.findMany();
+  const images = Array.from({ length: 6 }).map(() => ({
     url: "https://placehold.jp/400x400.png",
   }));
-  return result;
+  return { images, users };
 };
 
 export default function Index() {
   const data = useLoaderData<typeof loader>();
+  const images = data.images as Array<{ url: string }>;
+  const users = data.users;
+  console.log(users);
   return (
     <div>
       <h1 className="font-bold text-2xl">顧客管理システム</h1>
@@ -24,7 +30,7 @@ export default function Index() {
       <div className="mt-4">
         <h2 className="font-bold text-lg">今週の人気デザイン</h2>
         <ul className="grid grid-cols-2 gap-2 mt-2">
-          {data.map((item, index) => (
+          {images.map((item, index) => (
             <li key={index}>
               <img className="rounded-lg" src={item.url} alt="" />
             </li>
