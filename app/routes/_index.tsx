@@ -24,13 +24,11 @@ export default function Index() {
       <div className="mt-4">
         <h2 className="font-bold text-lg">今週の人気デザイン</h2>
         <ul className="grid grid-cols-2 gap-2 mt-2">
-          {data.map((item, index) => {
-            return (
-              <li key={index}>
-                <img src={item.url} alt="" />
-              </li>
-            );
-          })}
+          {data.map((item, index) => (
+            <li key={index}>
+              <img className="rounded-lg" src={item.url} alt="" />
+            </li>
+          ))}
         </ul>
       </div>
       <div className="mt-4">

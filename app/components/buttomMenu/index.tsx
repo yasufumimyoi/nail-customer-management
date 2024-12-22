@@ -4,7 +4,7 @@ import { NavLink } from "@remix-run/react";
 
 export const BottomNavigation = () => {
   return (
-    <div className="fixed rounded-full bottom-2 left-0 w-full bg-white border z-50">
+    <div className="fixed rounded-full bottom-2 left-1/2 transform -translate-x-1/2 w-[97%] bg-white border z-50">
       <div className="flex justify-around h-16 items-center">
         <NavLink
           to="/"
