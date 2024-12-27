@@ -10,6 +10,7 @@ import styles from "./tailwind.css?url";
 
 import "./tailwind.css";
 import { BottomNavigation } from "./components/buttomMenu";
+import { Toaster } from "~/components/ui/toaster";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -34,8 +35,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="pt-4 pb-24 pl-4 pr-4">
-        {children}
+      <body>
+        <main className="pt-4 pb-24 pl-4 pr-4">
+          {children}
+          <Toaster />
+        </main>
         <BottomNavigation />
         <ScrollRestoration />
         <Scripts />

@@ -20,6 +20,7 @@ export const loader: LoaderFunction = async () => {
 export default function Index() {
   const data = useLoaderData<typeof loader>();
   const rankingData = data.rankingData;
+
   return (
     <div>
       <h1 className="font-bold text-2xl">顧客管理システム</h1>
