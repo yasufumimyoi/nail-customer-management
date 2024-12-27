@@ -3,6 +3,8 @@ import { useLoaderData } from "@remix-run/react";
 import { SearchInput } from "~/components/searchInput/index";
 import { LoaderFunction } from "@remix-run/node";
 import { prisma } from "~/utils/prismaServer";
+import axios from "axios";
+import { load } from "cheerio";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Home" }];
@@ -10,17 +12,14 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async () => {
   const users = await prisma.user.findMany();
-  const images = Array.from({ length: 6 }).map(() => ({
-    url: "https://placehold.jp/400x400.png",
-  }));
-  return { images, users };
+  const rankingData = await getRankingData();
+
+  return { users, rankingData };
 };
 
 export default function Index() {
   const data = useLoaderData<typeof loader>();
-  const images = data.images as Array<{ url: string }>;
-  const users = data.users;
-  console.log(users);
+  const rankingData = data.rankingData;
   return (
     <div>
       <h1 className="font-bold text-2xl">顧客管理システム</h1>
@@ -30,11 +29,15 @@ export default function Index() {
       <div className="mt-4">
         <h2 className="font-bold text-lg">今週の人気デザイン</h2>
         <ul className="grid grid-cols-2 gap-2 mt-2">
-          {images.map((item, index) => (
-            <li key={index}>
-              <img className="rounded-lg" src={item.url} alt="" />
-            </li>
-          ))}
+          {rankingData.map(
+            (item: { image: string; url: string }, index: number) => (
+              <li key={index}>
+                <a href={item.url} target="_blank">
+                  <img className="rounded-lg" src={item.image} alt="" />
+                </a>
+              </li>
+            )
+          )}
         </ul>
       </div>
       <div className="mt-4">
@@ -64,3 +67,19 @@ export default function Index() {
     </div>
   );
 }
+
+const getRankingData = async () => {
+  const response = await axios.get("https://beauty.hotpepper.jp/nail/");
+  const $ = load(response.data);
+  const images = $(".nailRankingPhoto img");
+  const url = $(".nailRankingPhoto a");
+  let result = [];
+  for (let i = 0; i < images.length; i++) {
+    result.push({
+      image: images[i].attribs.src,
+      url: url[i].attribs.href,
+    });
+  }
+
+  return result;
+};
