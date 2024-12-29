@@ -15,10 +15,14 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  family_name   String
+  last_name      String
+  birth_date     DateTime
+  contents       String
+  conversation   String
+  label          String?
+  created_date   DateTime @default(now())
 }
 
 model Menu {
