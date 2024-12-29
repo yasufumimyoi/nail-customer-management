@@ -12,10 +12,13 @@ import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import { useToast } from "~/hooks/use-toast";
+import { DatePicker } from "~/components/ui/datePicker";
+import { PageTitle } from "~/components/pageTitle";
 
 const schema = z.object({
-  name: z.string({ required_error: "名前は必須です" }),
-  age: z.string().optional(),
+  familyName: z.string({ required_error: "姓は必須です" }),
+  lastName: z.string({ required_error: "名は必須です" }),
+  birthDate: z.string({ required_error: "生年月日は必須です" }),
   contents: z.string({ required_error: "施術内容を入力して下さい" }),
   conversation: z.string({ required_error: "会話内容を入力して下さい" }),
   label: z.string().optional(),
@@ -42,8 +45,9 @@ export default function Index() {
     shouldValidate: "onBlur",
     shouldRevalidate: "onBlur",
     defaultValue: {
-      name: "",
-      age: "",
+      familyName: "",
+      lastName: "",
+      birthDate: "",
       contents: "",
       conversation: "",
       label: "",
@@ -79,44 +83,66 @@ export default function Index() {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h1 className="font-bold text-2xl">新規追加</h1>
-        <Link to="/clients/" className="flex">
-          <MoveLeft className="h-5 w-5 text-gray-500" />
-        </Link>
-      </div>
+      <PageTitle title="新規追加" url="/clients/" />
       <div className="mt-5">
         <Form method="POST" {...getFormProps(form)}>
           <div className="mb-4">
             <div className="flex items-center">
               <Label
-                htmlFor={fields.name.id}
+                htmlFor={fields.familyName.id}
                 className="block text-sm font-medium text-gray-700"
               >
-                名前
+                姓
               </Label>
               <div className="ml-2 text-sm font-medium text-red-400">
-                {fields.name.errors}
+                {fields.familyName.errors}
               </div>
             </div>
             <Input
-              {...getInputProps(fields.name, { type: "text" })}
+              {...getInputProps(fields.familyName, { type: "text" })}
               placeholder="入力してください"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="mb-4">
-            <Label
-              htmlFor={fields.age.id}
-              className="block text-sm font-medium text-gray-700"
-            >
-              年齢
-            </Label>
+            <div className="flex items-center">
+              <Label
+                htmlFor={fields.lastName.id}
+                className="block text-sm font-medium text-gray-700"
+              >
+                名
+              </Label>
+              <div className="ml-2 text-sm font-medium text-red-400">
+                {fields.lastName.errors}
+              </div>
+            </div>
             <Input
-              {...getInputProps(fields.age, { type: "text" })}
+              {...getInputProps(fields.lastName, { type: "text" })}
               placeholder="入力してください"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+          <div className="mb-4">
+            <div className="flex items-center">
+              <Label
+                htmlFor={fields.familyName.id}
+                className="block text-sm font-medium text-gray-700"
+              >
+                生年月日
+              </Label>
+              <div className="ml-2 text-sm font-medium text-red-400">
+                {fields.birthDate.errors}
+              </div>
+            </div>
+            <div className="mt-1">
+              <DatePicker
+                meta={{
+                  id: fields.birthDate.id,
+                  name: fields.birthDate.name,
+                  initialValue: fields.birthDate.initialValue ?? "",
+                }}
+              />
+            </div>
           </div>
           <div className="mb-4">
             <div className="flex items-center">
