@@ -17,6 +17,7 @@ type Props = {
   meta: {
     id: string;
     name: string;
+    key: string;
     initialValue: string;
   };
 };
@@ -34,6 +35,7 @@ export const DatePicker = ({ meta }: Props) => {
         ref={control.register}
         id={meta.id}
         name={meta.name}
+        key={meta.key}
         defaultValue={
           meta.initialValue ? new Date(meta.initialValue).toISOString() : ""
         }

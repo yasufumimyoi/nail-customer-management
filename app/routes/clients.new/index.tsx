@@ -28,16 +28,29 @@ const schema = z.object({
 });
 
 export const meta: MetaFunction = () => {
-  return [{ title: "New Clients" }];
+  return [{ title: "新規追加" }];
 };
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
+  const data = Object.fromEntries(formData.entries());
+  const result = schema.safeParse(data);
   const submission = parseWithZod(formData, { schema });
 
-  if (submission.status !== "success") {
+  if (result.error) {
     return submission.reply();
   }
+
+  await prisma.user.create({
+    data: {
+      family_name: result.data.familyName,
+      last_name: result.data.lastName,
+      birth_date: result.data.birthDate,
+      contents: result.data.contents,
+      conversation: result.data.conversation,
+      created_date: new Date(),
+    },
+  });
 
   return submission.reply();
 }
@@ -108,6 +121,7 @@ export default function Index() {
             </div>
             <Input
               {...getInputProps(fields.familyName, { type: "text" })}
+              key={fields.familyName.key}
               placeholder="入力してください"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -126,6 +140,7 @@ export default function Index() {
             </div>
             <Input
               {...getInputProps(fields.lastName, { type: "text" })}
+              key={fields.lastName.key}
               placeholder="入力してください"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -147,6 +162,7 @@ export default function Index() {
                 meta={{
                   id: fields.birthDate.id,
                   name: fields.birthDate.name,
+                  key: fields.birthDate.key ?? "",
                   initialValue: fields.birthDate.initialValue ?? "",
                 }}
               />
@@ -165,6 +181,7 @@ export default function Index() {
               className="mt-1"
               id={fields.contents.id}
               name={fields.contents.name}
+              key={fields.contents.key}
               defaultValue={fields.contents.initialValue}
               onValueChange={(value) => {
                 form.update({
@@ -207,6 +224,7 @@ export default function Index() {
             </div>
             <Textarea
               {...getInputProps(fields.conversation, { type: "text" })}
+              key={fields.conversation.key}
               placeholder="入力してください"
               className="mt-1 block w-full h-40 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -240,6 +258,7 @@ export default function Index() {
               <Input
                 {...getInputProps(fields.label, { type: "text" })}
                 value={text}
+                key={fields.label.key}
                 onChange={(event) => setText(event.target.value)}
                 placeholder="入力してください"
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
