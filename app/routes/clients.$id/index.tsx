@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import type { MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
-import { MoveLeft } from "lucide-react";
+import { useLoaderData } from "@remix-run/react";
+import { PageTitle } from "~/components/pageTitle";
 import { Badge } from "~/components/ui/badge";
 
 export const meta: MetaFunction = () => {
@@ -28,12 +28,7 @@ export default function Index() {
   const data = useLoaderData<typeof loader>();
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h1 className="font-bold text-2xl">顧客詳細</h1>
-        <Link className="flex" to="/clients">
-          <MoveLeft className="h-5 w-5 text-gray-500" />
-        </Link>
-      </div>
+      <PageTitle title="顧客詳細" url="/clients" />
       <div className="mt-5">
         <Avatar>
           <AvatarImage
