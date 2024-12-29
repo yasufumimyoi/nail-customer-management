@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
-import { MoveLeft, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { FileUploader } from "~/components/fileUpload";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
@@ -14,13 +14,16 @@ import { z } from "zod";
 import { useToast } from "~/hooks/use-toast";
 import { DatePicker } from "~/components/ui/datePicker";
 import { PageTitle } from "~/components/pageTitle";
+import { prisma } from "~/utils/prismaServer";
+import { Card, CardHeader, CardTitle } from "~/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 
 const schema = z.object({
   familyName: z.string({ required_error: "姓は必須です" }),
   lastName: z.string({ required_error: "名は必須です" }),
   birthDate: z.string({ required_error: "生年月日は必須です" }),
-  contents: z.string({ required_error: "施術内容を入力して下さい" }),
-  conversation: z.string({ required_error: "会話内容を入力して下さい" }),
+  contents: z.string({ required_error: "施術内容を選択してください" }),
+  conversation: z.string({ required_error: "会話内容を入力してください" }),
   label: z.string().optional(),
 });
 
@@ -38,8 +41,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
   return submission.reply();
 }
+export const loader = async () => {
+  const menu = await prisma.menu.findMany();
+  return menu;
+};
 
 export default function Index() {
+  const menu = useLoaderData<typeof loader>();
   const lastResult = useActionData<typeof action>();
   const [form, fields] = useForm({
     shouldValidate: "onBlur",
@@ -48,7 +56,7 @@ export default function Index() {
       familyName: "",
       lastName: "",
       birthDate: "",
-      contents: "",
+      contents: menu[menu.findIndex((item) => !item.is_deleted)].menu_name,
       conversation: "",
       label: "",
     },
@@ -146,21 +154,44 @@ export default function Index() {
           </div>
           <div className="mb-4">
             <div className="flex items-center">
-              <Label
-                htmlFor={fields.contents.id}
-                className="block text-sm font-medium text-gray-700"
-              >
+              <div className="block text-sm font-medium text-gray-700">
                 施術内容
-              </Label>
+              </div>
               <div className="ml-2 text-sm font-medium text-red-400">
                 {fields.contents.errors}
               </div>
             </div>
-            <Input
-              {...getInputProps(fields.contents, { type: "text" })}
-              placeholder="入力してください"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <RadioGroup
+              className="mt-1"
+              id={fields.contents.id}
+              name={fields.contents.name}
+              defaultValue={fields.contents.initialValue}
+              onValueChange={(value) => {
+                form.update({
+                  name: fields.contents.name,
+                  value,
+                });
+              }}
+            >
+              {menu.map((item) => (
+                <Card key={item.menu_id}>
+                  <CardHeader className="p-4">
+                    <CardTitle className="flex">
+                      <RadioGroupItem
+                        id={item.menu_id.toString()}
+                        value={item.menu_name}
+                      />
+                      <Label
+                        className="flex-1 ml-4"
+                        htmlFor={item.menu_id.toString()}
+                      >
+                        {item.menu_name}
+                      </Label>
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+              ))}
+            </RadioGroup>
           </div>
           <div className="mb-4">
             <div className="flex items-center">
